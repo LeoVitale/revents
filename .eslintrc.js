@@ -39,6 +39,8 @@ module.exports = {
         ['config', './src/config'],
         ['utils', './src/utils'],
         ['ui', './src/components/ui'],
+        ['app', './src/app'],
+        ['features', './src/features'],
       ],
     },
   },

@@ -10,5 +10,7 @@ module.exports = override(
     config: path.resolve(__dirname, 'src/config'),
     utils: path.resolve(__dirname, 'src/utils'),
     ui: path.resolve(__dirname, 'src/components/ui'),
+    app: path.resolve(__dirname, 'src/app'),
+    features: path.resolve(__dirname, 'src/features'),
   }),
 );

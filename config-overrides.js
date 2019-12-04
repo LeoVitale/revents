@@ -1,5 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { override, addWebpackAlias } = require('customize-cra');
+const {
+  override,
+  addWebpackAlias,
+  addWebpackPlugin,
+} = require('customize-cra');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const path = require('path');
 
 module.exports = override(
@@ -13,4 +18,6 @@ module.exports = override(
     app: path.resolve(__dirname, 'src/app'),
     features: path.resolve(__dirname, 'src/features'),
   }),
+  process.env.NODE_ENV === 'production' &&
+    addWebpackPlugin(new BundleAnalyzerPlugin()),
 );

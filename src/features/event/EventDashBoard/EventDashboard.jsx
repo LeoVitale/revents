@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Button } from 'semantic-ui-react';
+import cuid from 'cuid';
 
 import EventList from 'features/event/EventList';
 import EventForm from 'features/event/EventForm';
@@ -63,6 +64,14 @@ const EventDashboard = () => {
     setOpen(!isOpen);
   };
 
+  const onCreateEvent = newEvent => {
+    newEvent.id = cuid();
+    newEvent.hostPhotoURL = '/assets/user.png';
+    console.log(newEvent);
+
+    setEvents([...events, newEvent]);
+  };
+
   return (
     <Grid>
       <Grid.Column width={10}>
@@ -74,7 +83,12 @@ const EventDashboard = () => {
           content="Create Event"
           onClick={onClickOpenToggleForm}
         />
-        {isOpen && <EventForm cancelFormOpen={onClickOpenToggleForm} />}
+        {isOpen && (
+          <EventForm
+            cancelFormOpen={onClickOpenToggleForm}
+            onCreateEvent={onCreateEvent}
+          />
+        )}
       </Grid.Column>
     </Grid>
   );

@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Segment, Form, Button } from 'semantic-ui-react';
 
-const EventForm = ({ cancelFormOpen, onCreateEvent }) => {
+const EventForm = ({
+  cancelFormOpen,
+  createEvent,
+  selectedEvent,
+  updateEvent,
+}) => {
   const [form, setForm] = useState({
     title: '',
     date: '',
@@ -10,12 +15,21 @@ const EventForm = ({ cancelFormOpen, onCreateEvent }) => {
     hostedBy: '',
   });
 
+  useEffect(() => {
+    setForm(selectedEvent ? { ...selectedEvent } : {});
+  }, [selectedEvent]);
+
   const handleInputChange = ({ target }) => {
     setForm({ ...form, [target.name]: target.value });
   };
 
   const handleCreateEvent = () => {
-    onCreateEvent(form);
+    if (form.id) {
+      updateEvent(form);
+    } else {
+      createEvent(form);
+    }
+
     setForm({
       title: '',
       date: '',

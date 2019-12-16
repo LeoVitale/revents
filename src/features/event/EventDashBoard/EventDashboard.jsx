@@ -9,7 +9,7 @@ const eventsMock = [
   {
     id: '1',
     title: 'Trip to Tower of London',
-    date: '2018-03-27T11:00:00+00:00',
+    date: '2018-03-27',
     category: 'culture',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.',
@@ -33,7 +33,7 @@ const eventsMock = [
   {
     id: '2',
     title: 'Trip to Punch and Judy Pub',
-    date: '2018-03-28T14:00:00+00:00',
+    date: '2018-03-28',
     category: 'drinks',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.',
@@ -59,34 +59,61 @@ const eventsMock = [
 const EventDashboard = () => {
   const [events, setEvents] = useState(eventsMock);
   const [isOpen, setOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const onClickOpenToggleForm = () => {
-    setOpen(!isOpen);
+  const onCreateFormOpen = () => {
+    setSelectedEvent(null);
+    setOpen(true);
+  };
+
+  const onFormCancel = () => {
+    setOpen(false);
   };
 
   const onCreateEvent = newEvent => {
     newEvent.id = cuid();
     newEvent.hostPhotoURL = '/assets/user.png';
-    console.log(newEvent);
-
     setEvents([...events, newEvent]);
+  };
+
+  const onSelectEvent = event => () => {
+    setSelectedEvent(event);
+    setOpen(true);
+  };
+
+  const onUpdateEvent = updatedEvent => {
+    const newEvents = events.map(event => {
+      if (event.id === updatedEvent.id) {
+        return { ...updatedEvent };
+      }
+      return event;
+    });
+    setEvents(newEvents);
+  };
+
+  const onDeleteEvent = deletedEvent => () => {
+    const newEvents = events.filter(event => event.id !== deletedEvent.id);
+    setEvents(newEvents);
   };
 
   return (
     <Grid>
       <Grid.Column width={10}>
-        <EventList events={events} />
+        <EventList
+          events={events}
+          selectEvent={onSelectEvent}
+          deleteEvent={onDeleteEvent}
+        />
       </Grid.Column>
       <Grid.Column width={6}>
-        <Button
-          positive
-          content="Create Event"
-          onClick={onClickOpenToggleForm}
-        />
+        <Button positive content="Create Event" onClick={onCreateFormOpen} />
         {isOpen && (
           <EventForm
-            cancelFormOpen={onClickOpenToggleForm}
-            onCreateEvent={onCreateEvent}
+            key={selectedEvent ? selectedEvent.id : 0}
+            updateEvent={onUpdateEvent}
+            selectedEvent={selectedEvent}
+            cancelFormOpen={onFormCancel}
+            createEvent={onCreateEvent}
           />
         )}
       </Grid.Column>

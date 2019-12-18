@@ -5,9 +5,11 @@ const {
   addWebpackPlugin,
 } = require('customize-cra');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const rewireReactHotLoader = require('react-app-rewire-hot-loader-for-customize-cra');
 const path = require('path');
 
 module.exports = override(
+  rewireReactHotLoader(),
   addWebpackAlias({
     components: path.resolve(__dirname, 'src/components'),
     containers: path.resolve(__dirname, 'src/containers'),

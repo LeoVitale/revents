@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Grid, Button } from 'semantic-ui-react';
 import cuid from 'cuid';
 
 import EventList from 'features/event/EventList';
 import EventForm from 'features/event/EventForm';
+
+import { addNewItem, getList } from 'modules/app';
 
 const eventsMock = [
   {
@@ -60,6 +63,12 @@ const EventDashboard = () => {
   const [events, setEvents] = useState(eventsMock);
   const [isOpen, setOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const dispatch = useDispatch();
+  const list = useSelector(getList);
+
+  console.log('===============list=====================');
+  console.log(list);
+  console.log('====================================');
 
   const onCreateFormOpen = () => {
     setSelectedEvent(null);
@@ -106,6 +115,12 @@ const EventDashboard = () => {
         />
       </Grid.Column>
       <Grid.Column width={6}>
+        <Button
+          positive
+          content="Add New Item"
+          onClick={() => dispatch(addNewItem())}
+        />
+
         <Button positive content="Create Event" onClick={onCreateFormOpen} />
         {isOpen && (
           <EventForm

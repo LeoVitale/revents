@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Segment, Form, Button } from 'semantic-ui-react';
+import { useParams, useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { getEvents, updateEvent, createEvent } from 'modules/events';
+import cuid from 'cuid';
 
-const EventForm = ({
-  cancelFormOpen,
-  createEvent,
-  selectedEvent,
-  updateEvent,
-}) => {
-  const [form, setForm] = useState({
-    title: '',
-    date: '',
-    city: '',
-    venue: '',
-    hostedBy: '',
-  });
+const cleanForm = {
+  title: '',
+  date: '',
+  city: '',
+  venue: '',
+  hostedBy: '',
+};
+
+const EventForm = () => {
+  const { id } = useParams();
+  const history = useHistory();
+  const events = useSelector(getEvents);
+  const dispatch = useDispatch();
+
+  const selectedEvent =
+    id && events.length > 0 && events.find(e => e.id === id);
+
+  const [form, setForm] = useState(cleanForm);
 
   useEffect(() => {
-    setForm(selectedEvent ? { ...selectedEvent } : {});
+    setForm(selectedEvent ? { ...selectedEvent } : cleanForm);
   }, [selectedEvent]);
 
   const handleInputChange = ({ target }) => {
@@ -25,18 +34,15 @@ const EventForm = ({
 
   const handleCreateEvent = () => {
     if (form.id) {
-      updateEvent(form);
+      dispatch(updateEvent(form));
+      history.goBack();
     } else {
-      createEvent(form);
+      form.id = cuid();
+      form.hostPhotoURL = '/assets/user.png';
+      dispatch(createEvent(form));
+      history.push('/events');
     }
-
-    setForm({
-      title: '',
-      date: '',
-      city: '',
-      venue: '',
-      hostedBy: '',
-    });
+    setForm(cleanForm);
   };
 
   return (
@@ -106,7 +112,7 @@ const EventForm = ({
         <Button positive type="submit" onClick={handleCreateEvent}>
           Submit
         </Button>
-        <Button type="button" onClick={cancelFormOpen}>
+        <Button type="button" onClick={() => history.push('/events')}>
           Cancel
         </Button>
       </Form>

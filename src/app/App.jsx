@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Container } from 'semantic-ui-react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useLocation } from 'react-router-dom';
 import NavBar from 'features/nav/NavBar';
 import Home from 'containers/Home';
 import EventDashboard from 'containers/EventDashBoard';
@@ -9,9 +9,15 @@ import EventDetail from 'containers/EventDetail';
 import PeopleDashboard from 'containers/PeopleDashboard';
 import UserDetail from 'containers/UserDetail';
 import SettingsDashboard from 'containers/settings/SettingsDashboard';
-import EventForm from 'features/event/EventForm';
+import EventForm from 'containers/EventForm';
 
 const App = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <>
       <Route exact path="/" component={Home} />
@@ -22,12 +28,15 @@ const App = () => {
             <NavBar />
             <Container className="main">
               <Switch>
-                <Route path="/events" component={EventDashboard} />
+                <Route exact path="/events" component={EventDashboard} />
                 <Route path="/events/:id" component={EventDetail} />
                 <Route path="/people" component={PeopleDashboard} />
                 <Route path="/profile/:id" component={UserDetail} />
                 <Route path="/settings" component={SettingsDashboard} />
-                <Route path="/createEvent" component={EventForm} />
+                <Route
+                  path={['/createEvent', '/manage/:id']}
+                  component={EventForm}
+                />
               </Switch>
             </Container>
           </>

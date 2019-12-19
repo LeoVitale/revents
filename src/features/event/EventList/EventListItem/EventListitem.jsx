@@ -1,8 +1,9 @@
 import React from 'react';
 import { Segment, Item, Icon, List, Button } from 'semantic-ui-react';
 import EventListAttendee from 'features/event/EventList/EventListAttendee';
+import { Link } from 'react-router-dom';
 
-const EventListitem = ({ event, selectEvent, deleteEvent }) => {
+const EventListitem = ({ event, deleteEvent }) => {
   const {
     hostPhotoURL,
     hostedBy,
@@ -22,7 +23,7 @@ const EventListitem = ({ event, selectEvent, deleteEvent }) => {
             <Item.Content>
               <Item.Header as="a">{title}</Item.Header>
               <Item.Description>
-                Hosted by <a>{hostedBy}</a>
+                Hosted by <a href="/">{hostedBy}</a>
               </Item.Description>
             </Item.Content>
           </Item>
@@ -51,11 +52,11 @@ const EventListitem = ({ event, selectEvent, deleteEvent }) => {
           onClick={deleteEvent(event)}
         />
         <Button
-          as="a"
+          as={Link}
+          to={`/events/${event.id}`}
           color="teal"
           floated="right"
           content="View"
-          onClick={selectEvent(event)}
         />
       </Segment>
     </Segment.Group>

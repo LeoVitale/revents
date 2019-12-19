@@ -6,12 +6,11 @@ import { BrowserRouter } from 'react-router-dom';
 
 import 'semantic-ui-css/semantic.min.css';
 import './index.css';
-import App from 'app/App';
+import App from 'app/App.jsx';
 import configureStore from './redux/storeConfig';
 import * as serviceWorker from './serviceWorker';
 
 const store = configureStore();
-
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>

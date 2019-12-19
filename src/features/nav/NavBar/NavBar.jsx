@@ -19,7 +19,7 @@ const NavBar = () => {
     <Menu inverted fixed="top">
       <Container>
         <Menu.Item as={NavLink} exact to="/" header>
-          <img src="assets/logo.png" alt="logo" />
+          <img src="/assets/logo.png" alt="logo" />
           Re-vents
         </Menu.Item>
         <Menu.Item as={NavLink} exact to="/events" name="Events" />
@@ -27,7 +27,6 @@ const NavBar = () => {
         <Menu.Item>
           <Button
             as={Link}
-            exact
             to="/createEvent"
             floated="right"
             positive

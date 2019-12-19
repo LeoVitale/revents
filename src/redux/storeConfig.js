@@ -3,7 +3,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 // import firebase from 'config/firebase';
 import rootReducer from 'modules/index';
-import clientMiddleware from './middlewares/clientMiddlewares';
+// import clientMiddleware from './middlewares/clientMiddlewares';
 
 const composeEnhancers = composeWithDevTools({
   // Specify name here, actionsBlacklist, actionsCreators and other options if needed

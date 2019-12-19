@@ -5,6 +5,7 @@ const {
   addWebpackPlugin,
 } = require('customize-cra');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const rewireReactHotLoader = require('react-app-rewire-hot-loader-for-customize-cra');
 const path = require('path');
 
@@ -20,6 +21,7 @@ module.exports = override(
     app: path.resolve(__dirname, 'src/app'),
     features: path.resolve(__dirname, 'src/features'),
   }),
+  addWebpackPlugin(new DuplicatePackageCheckerPlugin()),
   process.env.NODE_ENV === 'production' &&
     addWebpackPlugin(new BundleAnalyzerPlugin()),
 );

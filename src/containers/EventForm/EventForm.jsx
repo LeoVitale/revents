@@ -28,7 +28,9 @@ const validationSchema = Yup.object().shape({
     .min(4, 'Description needs to be at least 5 characters'),
   city: Yup.string().required('The city is required'),
   venue: Yup.string().required('The venue is required'),
-  date: Yup.string().required('Required'),
+  date: Yup.string()
+    .required('Required')
+    .nullable(),
 });
 
 const EventForm = () => {
@@ -77,12 +79,10 @@ const EventForm = () => {
             initialValues={{ ...event }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              console.log(values);
               onFormSubmit(values, actions);
             }}>
             {props => (
               <Form autoComplete="off" onSubmit={props.handleSubmit}>
-                {' '}
                 <TextInput
                   name="title"
                   type="text"
@@ -113,7 +113,7 @@ const EventForm = () => {
                   type="text"
                 />
                 <TextInput name="venue" type="text" label="Venue" />
-                <Button positive type="submit">
+                <Button positive type="submit" disabled={!props.isValid}>
                   Submit
                 </Button>
                 <Button

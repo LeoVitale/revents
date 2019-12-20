@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Segment, Grid, Icon, Button } from 'semantic-ui-react';
+import { format } from 'date-fns';
+import EventDetailMap from 'features/event/EventDetail/EventDetailMap';
 
 const EventDetailInfo = ({ event }) => {
-  const { description, date, venue } = event;
+  const [isMapOpen, setShowMapToggle] = useState(false);
+  const { description, date, venue, venueCord } = event;
 
   return (
     <Segment.Group>
@@ -22,7 +25,7 @@ const EventDetailInfo = ({ event }) => {
             <Icon name="calendar" size="large" color="teal" />
           </Grid.Column>
           <Grid.Column width={15}>
-            <span>{date}</span>
+            <span>{date && format(new Date(date), 'dd LLL yyyy h:mm a')}</span>
           </Grid.Column>
         </Grid>
       </Segment>
@@ -35,10 +38,16 @@ const EventDetailInfo = ({ event }) => {
             <span>{venue}</span>
           </Grid.Column>
           <Grid.Column width={4}>
-            <Button color="teal" size="tiny" content="Show Map" />
+            <Button
+              color="teal"
+              size="tiny"
+              content={isMapOpen ? 'Hide Map' : 'Show Map'}
+              onClick={() => setShowMapToggle(!isMapOpen)}
+            />
           </Grid.Column>
         </Grid>
       </Segment>
+      {isMapOpen && <EventDetailMap {...venueCord} />}
     </Segment.Group>
   );
 };

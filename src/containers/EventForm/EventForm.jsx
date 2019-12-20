@@ -1,15 +1,20 @@
-import React from 'react';
+/* global google */
+
+import React, { useState } from 'react';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import cuid from 'cuid';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+
 import { getEvents, updateEvent, createEvent } from 'modules/events';
 import TextInput from 'components/form/TextInput';
 import TextArea from 'components/form/TextArea';
 import DateInput from 'components/form/DateInput';
 import SelectInput from 'components/form/SelectInput';
+import PlaceInput from 'components/form/PlaceInput';
 
 const category = [
   { key: 'drinks', text: 'Drinks', value: 'drinks' },
@@ -38,6 +43,8 @@ const EventForm = () => {
   const history = useHistory();
   const events = useSelector(getEvents);
   const dispatch = useDispatch();
+  const [cityLatLng, setCityLatLng] = useState({});
+  const [venueCord, setVenueCord] = useState({});
 
   const event =
     id && events.length > 0
@@ -53,6 +60,7 @@ const EventForm = () => {
         };
 
   const onFormSubmit = (values, actions) => {
+    values.venueCord = venueCord;
     if (values.id) {
       dispatch(updateEvent(values));
       history.goBack();
@@ -67,6 +75,26 @@ const EventForm = () => {
     }
     actions.resetForm();
     actions.setSubmitting(false);
+  };
+
+  const onCitySelect = city => {
+    geocodeByAddress(city)
+      .then(results => getLatLng(results[0]))
+      .then(latLng => {
+        console.log('Success', latLng);
+        setCityLatLng(latLng);
+      })
+      .catch(error => console.error('Error', error));
+  };
+
+  const onVenueSelect = city => {
+    geocodeByAddress(city)
+      .then(results => getLatLng(results[0]))
+      .then(latLng => {
+        console.log('Success', latLng);
+        setVenueCord(latLng);
+      })
+      .catch(error => console.error('Error', error));
   };
 
   return (
@@ -103,7 +131,24 @@ const EventForm = () => {
                   rows={4}
                 />
                 <Header sub color="teal" content="Event Location Details" />
-                <TextInput name="city" type="text" label="Event City" />
+                <PlaceInput
+                  name="city"
+                  type="text"
+                  label="Event City"
+                  onSelect={onCitySelect}
+                  options={{ types: ['(cities)'] }}
+                />
+                <PlaceInput
+                  name="venue"
+                  type="text"
+                  label="Venue"
+                  onSelect={onVenueSelect}
+                  options={{
+                    location: new google.maps.LatLng(cityLatLng),
+                    radius: 1000,
+                    types: ['establishment'],
+                  }}
+                />
                 <DateInput
                   name="date"
                   dateFormat="dd LLL yyyy h:mm a"
@@ -112,7 +157,6 @@ const EventForm = () => {
                   timeFormat="HH:mm"
                   type="text"
                 />
-                <TextInput name="venue" type="text" label="Venue" />
                 <Button positive type="submit" disabled={!props.isValid}>
                   Submit
                 </Button>

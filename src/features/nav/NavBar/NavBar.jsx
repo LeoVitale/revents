@@ -1,17 +1,28 @@
 import React, { useState } from 'react';
 import { Menu, Container, Button } from 'semantic-ui-react';
 import { NavLink, Link, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal } from 'modules/modal';
+import { getAuth, logOut } from 'modules/auth';
+
 import SignedOut from 'features/nav/Menus/SignedOut';
 import SignedIn from 'features/nav/Menus/SignedIn';
 
 const NavBar = () => {
-  const [authenticated, setAuthenticanted] = useState(false);
+  const dispatch = useDispatch();
+  const { authenticated, currentUser } = useSelector(getAuth);
   const history = useHistory();
 
-  const onSignIn = () => setAuthenticanted(true);
+  const onSignIn = () => {
+    dispatch(openModal('LoginModal'));
+  };
+
+  const onRegister = () => {
+    dispatch(openModal('RegisterModal'));
+  };
 
   const onSignOut = () => {
-    setAuthenticanted(false);
+    dispatch(logOut());
     history.push('/');
   };
 
@@ -35,9 +46,9 @@ const NavBar = () => {
           />
         </Menu.Item>
         {authenticated ? (
-          <SignedIn signOut={onSignOut} />
+          <SignedIn signOut={onSignOut} currentUser={currentUser} />
         ) : (
-          <SignedOut signIn={onSignIn} />
+          <SignedOut signIn={onSignIn} register={onRegister} />
         )}
       </Container>
     </Menu>

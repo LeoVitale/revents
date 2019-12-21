@@ -3,6 +3,8 @@ import { hot } from 'react-hot-loader/root';
 import { Container } from 'semantic-ui-react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import NavBar from 'features/nav/NavBar';
+import ModalManager from 'features/modals/ModalManager';
+
 import Home from 'containers/Home';
 import EventDashboard from 'containers/EventDashBoard';
 import EventDetail from 'containers/EventDetail';
@@ -20,6 +22,7 @@ const App = () => {
 
   return (
     <>
+      <ModalManager />
       <Route exact path="/" component={Home} />
       <Route
         path="/(.+)"

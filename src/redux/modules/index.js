@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { reducer as toastr } from 'react-redux-toastr';
 import app from './app';
 import events from './events';
 import modals from './modal';
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   modals,
   auth,
   async,
+  toastr,
 });
 
 export default rootReducer;

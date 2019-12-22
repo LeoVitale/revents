@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 
 const EventDetail = () => {
   const { id } = useParams();
-  const events = useSelector(getEvents);
+  const { events } = useSelector(getEvents);
   const event = id && events.length > 0 && events.find(e => e.id === id);
 
   return (

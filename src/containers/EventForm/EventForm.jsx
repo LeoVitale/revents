@@ -41,7 +41,7 @@ const validationSchema = Yup.object().shape({
 const EventForm = () => {
   const { id } = useParams();
   const history = useHistory();
-  const events = useSelector(getEvents);
+  const { events } = useSelector(getEvents);
   const dispatch = useDispatch();
   const [cityLatLng, setCityLatLng] = useState({});
   const [venueCord, setVenueCord] = useState({});

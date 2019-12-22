@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
-import EventList from 'features/event/EventList';
+
 import { getEvents, deleteEvent, loadEvents } from 'modules/events';
 import Loading from 'components/layout/Loading';
+import EventActivity from 'features/event/EventActivity';
+import EventList from 'features/event/EventList';
 
 const EventDashboard = () => {
   const dispatch = useDispatch();
@@ -27,7 +29,7 @@ const EventDashboard = () => {
         <EventList events={events} deleteEvent={onDeleteEvent} />
       </Grid.Column>
       <Grid.Column width={6}>
-        <h2>Activity Feed</h2>
+        <EventActivity />
       </Grid.Column>
     </Grid>
   );

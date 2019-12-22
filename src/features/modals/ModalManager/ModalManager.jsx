@@ -15,8 +15,6 @@ const modalLookup = {
 const ModalManager = () => {
   const currentModal = useSelector(getCurrentModal);
 
-  console.log(currentModal);
-
   let renderedModal;
 
   if (currentModal) {

@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
 import { Container } from 'semantic-ui-react';
 import { Switch, Route, useLocation } from 'react-router-dom';
+import ReduxToastr from 'react-redux-toastr';
 import NavBar from 'features/nav/NavBar';
 import ModalManager from 'features/modals/ModalManager';
-
 import Home from 'containers/Home';
 import EventDashboard from 'containers/EventDashBoard';
 import EventDetail from 'containers/EventDetail';
@@ -23,6 +23,11 @@ const App = () => {
   return (
     <>
       <ModalManager />
+      <ReduxToastr
+        position="bottom-right"
+        transitionIn="fadeIn"
+        transitionOut="fadeOut"
+      />
       <Route exact path="/" component={Home} />
       <Route
         path="/(.+)"

@@ -2,6 +2,7 @@ import { createSelector, createStructuredSelector } from 'reselect';
 import { fetchSampleData } from 'app/data/mockApi';
 import { createReducer } from '../utils/reducer';
 import { asyncActionStart, asyncActionFinish, asyncActionError } from './async';
+import { toastr } from 'react-redux-toastr';
 
 const CREATE_EVENT = 'events/CREATE_EVENT';
 const UPDATE_EVENT = 'events/UPDATE_EVENT';
@@ -55,10 +56,21 @@ export default createReducer(initialState, {
   ACTIONS CREATORS
 */
 
-export const createEvent = event => ({
-  type: CREATE_EVENT,
-  payload: { event },
-});
+export const createEvent = event => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: CREATE_EVENT,
+        payload: { event },
+      });
+
+      toastr.success('Success!', 'Event has been created');
+    } catch (error) {
+      console.log(error);
+      toastr.error('Oops', 'Something went wrong');
+    }
+  };
+};
 
 export const updateEvent = event => ({
   type: UPDATE_EVENT,

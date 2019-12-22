@@ -1,8 +1,8 @@
-import { createSelector, createStructuredSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
+import { toastr } from 'react-redux-toastr';
 import { fetchSampleData } from 'app/data/mockApi';
 import { createReducer } from '../utils/reducer';
 import { asyncActionStart, asyncActionFinish, asyncActionError } from './async';
-import { toastr } from 'react-redux-toastr';
 
 const CREATE_EVENT = 'events/CREATE_EVENT';
 const UPDATE_EVENT = 'events/UPDATE_EVENT';

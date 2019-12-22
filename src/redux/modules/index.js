@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 import { reducer as toastr } from 'react-redux-toastr';
+import { firebaseReducer as firebase } from 'react-redux-firebase';
+import { firestoreReducer as firestore } from 'redux-firestore';
 import app from './app';
 import events from './events';
 import modals from './modal';
@@ -13,6 +15,8 @@ const rootReducer = combineReducers({
   auth,
   async,
   toastr,
+  firebase,
+  firestore,
 });
 
 export default rootReducer;

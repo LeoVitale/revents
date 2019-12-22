@@ -33,15 +33,15 @@ const EventListitem = ({ event, deleteEvent }) => {
       <Segment>
         <span>
           <Icon name="clock" />
-          {format(new Date(date), 'EEEE do LLL')} at{' '}
-          {format(new Date(date), 'h:mm a')} |
+          {format(date.toDate(), 'EEEE do LLL')} at{' '}
+          {format(date.toDate(), 'h:mm a')} |
           <Icon name="marker" /> {venue}
         </span>
       </Segment>
       <Segment secondary>
         <List horizontal>
-          {attendees?.map(attendee => (
-            <EventListAttendee key={attendee.id} attendee={attendee} />
+          {Object.values(event.attendees).map((attendee, index) => (
+            <EventListAttendee key={index} attendee={attendee} />
           ))}
         </List>
       </Segment>

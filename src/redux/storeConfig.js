@@ -1,7 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
+import { getFirebase } from 'react-redux-firebase';
+import { getFirestore } from 'redux-firestore';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
-// import firebase from 'config/firebase';
 import rootReducer from 'modules/index';
 // import clientMiddleware from './middlewares/clientMiddlewares';
 
@@ -10,10 +11,11 @@ const composeEnhancers = composeWithDevTools({
 });
 
 const configureStore = initialState => {
+  const middlewares = [thunk.withExtraArgument(getFirebase, getFirestore)];
   const store = createStore(
     rootReducer,
     initialState,
-    composeEnhancers(applyMiddleware(thunk)),
+    composeEnhancers(applyMiddleware(...middlewares)),
   );
   return store;
 };

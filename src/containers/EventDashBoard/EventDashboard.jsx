@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 
-import { getEvents, deleteEvent, loadEvents } from 'modules/events';
+import { getEvents, deleteEvent } from 'modules/events';
 import Loading from 'components/layout/Loading';
 import EventActivity from 'features/event/EventActivity';
 import EventList from 'features/event/EventList';
+import { useFirestoreConnect } from 'react-redux-firebase';
 
 const EventDashboard = () => {
+  useFirestoreConnect('events');
   const dispatch = useDispatch();
-  const { events, loading } = useSelector(getEvents);
+  const { loading } = useSelector(getEvents);
 
-  useEffect(() => {
-    dispatch(loadEvents());
-  }, []);
+  const { events } = useSelector(state => state.firestore.ordered);
 
   const onDeleteEvent = ({ id }) => () => {
     dispatch(deleteEvent(id));

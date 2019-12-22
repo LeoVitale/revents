@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { createReducer } from '../utils/reducer';
+import { closeModal } from './modal';
 
 const LOGIN_USER = 'events/LOGIN_USER';
 const SIGN_OUT_USER = 'events/SIGN_OUT_USER';
@@ -37,11 +38,14 @@ export default createReducer(initialState, {
 */
 
 export const login = creds => {
-  return {
-    type: LOGIN_USER,
-    payload: {
-      creds,
-    },
+  return dispatch => {
+    dispatch({
+      type: LOGIN_USER,
+      payload: {
+        creds,
+      },
+    });
+    dispatch(closeModal());
   };
 };
 

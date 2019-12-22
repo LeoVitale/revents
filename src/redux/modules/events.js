@@ -1,69 +1,15 @@
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
+import { fetchSampleData } from 'app/data/mockApi';
 import { createReducer } from '../utils/reducer';
+import { asyncActionStart, asyncActionFinish, asyncActionError } from './async';
 
 const CREATE_EVENT = 'events/CREATE_EVENT';
 const UPDATE_EVENT = 'events/UPDATE_EVENT';
 const DELETE_EVENT = 'events/DELETE_EVENT';
+const FETCH_EVENTS = 'events/FETCH_EVENTS';
 
 const initialState = {
-  list: [
-    {
-      id: '1',
-      title: 'Trip to Empire State building',
-      date: '2018-03-21',
-      category: 'culture',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.',
-      city: 'NY, USA',
-      venue: 'Empire State Building, 5th Avenue, New York, NY, USA',
-      venueCord: {
-        lat: 40.7484405,
-        lng: -73.98566440000002,
-      },
-      hostedBy: 'Bob',
-      hostPhotoURL: 'https://randomuser.me/api/portraits/men/20.jpg',
-      attendees: [
-        {
-          id: 'a',
-          name: 'Bob',
-          photoURL: 'https://randomuser.me/api/portraits/men/20.jpg',
-        },
-        {
-          id: 'b',
-          name: 'Tom',
-          photoURL: 'https://randomuser.me/api/portraits/men/22.jpg',
-        },
-      ],
-    },
-    {
-      id: '2',
-      title: 'Trip to Punch and Judy Pub',
-      date: '2018-03-18',
-      category: 'drinks',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.',
-      city: 'London, UK',
-      venue: 'Punch & Judy, Henrietta Street, London, UK',
-      venueCord: {
-        lat: 51.5118074,
-        lng: -0.12300089999996544,
-      },
-      hostedBy: 'Tom',
-      hostPhotoURL: 'https://randomuser.me/api/portraits/men/22.jpg',
-      attendees: [
-        {
-          id: 'a',
-          name: 'Bob',
-          photoURL: 'https://randomuser.me/api/portraits/men/20.jpg',
-        },
-        {
-          id: 'b',
-          name: 'Tom',
-          photoURL: 'https://randomuser.me/api/portraits/men/22.jpg',
-        },
-      ],
-    },
-  ],
+  list: [],
 };
 
 /*
@@ -91,10 +37,18 @@ const deleteEventReducer = (state, payload) => {
   };
 };
 
+const fetchEventsReducer = (state, payload) => {
+  return {
+    ...state,
+    list: payload.events,
+  };
+};
+
 export default createReducer(initialState, {
   [CREATE_EVENT]: createEventReducer,
   [UPDATE_EVENT]: updateEventReducer,
   [DELETE_EVENT]: deleteEventReducer,
+  [FETCH_EVENTS]: fetchEventsReducer,
 });
 
 /*
@@ -116,11 +70,25 @@ export const deleteEvent = id => ({
   payload: { id },
 });
 
+export const loadEvents = () => {
+  return async dispatch => {
+    try {
+      dispatch(asyncActionStart());
+      const events = await fetchSampleData();
+      dispatch({ type: FETCH_EVENTS, payload: { events } });
+      dispatch(asyncActionFinish());
+    } catch (err) {
+      console.log(err);
+      dispatch(asyncActionError());
+    }
+  };
+};
+
 /*
   SELECTOR
 */
 
-export const getEvents = createSelector(
-  state => state.events.list,
-  events => events,
-);
+export const getEvents = createStructuredSelector({
+  events: state => state.events.list,
+  loading: state => state.async.loading,
+});

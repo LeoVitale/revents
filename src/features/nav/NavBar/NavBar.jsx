@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Menu, Container, Button } from 'semantic-ui-react';
 import { NavLink, Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,17 +34,22 @@ const NavBar = () => {
           Re-vents
         </Menu.Item>
         <Menu.Item as={NavLink} exact to="/events" name="Events" />
-        <Menu.Item as={NavLink} exact to="/people" name="People" />
-        <Menu.Item>
-          <Button
-            as={Link}
-            to="/createEvent"
-            floated="right"
-            positive
-            inverted
-            content="Create Event"
-          />
-        </Menu.Item>
+        {authenticated && (
+          <>
+            <Menu.Item as={NavLink} exact to="/people" name="People" />
+            <Menu.Item>
+              <Button
+                as={Link}
+                to="/createEvent"
+                floated="right"
+                positive
+                inverted
+                content="Create Event"
+              />
+            </Menu.Item>
+          </>
+        )}
+
         {authenticated ? (
           <SignedIn signOut={onSignOut} currentUser={currentUser} />
         ) : (

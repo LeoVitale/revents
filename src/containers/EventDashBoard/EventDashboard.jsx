@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import EventList from 'features/event/EventList';
-import { getEvents, deleteEvent } from 'modules/events';
+import { getEvents, deleteEvent, loadEvents } from 'modules/events';
+import Loading from 'components/layout/Loading';
 
 const EventDashboard = () => {
   const dispatch = useDispatch();
-  const events = useSelector(getEvents);
+  const { events, loading } = useSelector(getEvents);
+
+  useEffect(() => {
+    dispatch(loadEvents());
+  }, []);
 
   const onDeleteEvent = ({ id }) => () => {
     dispatch(deleteEvent(id));
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Grid>

@@ -19,6 +19,7 @@ const rrfConfig = {
   userProfiles: 'users',
   attachAuthIsReady: true,
   useFirestoreForProfile: true,
+  updateProfileOnLogin: false,
 };
 
 const rrfProps = {

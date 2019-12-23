@@ -7,11 +7,15 @@ import { getAuth, logOut } from 'modules/auth';
 
 import SignedOut from 'features/nav/Menus/SignedOut';
 import SignedIn from 'features/nav/Menus/SignedIn';
+import { useFirebase } from 'react-redux-firebase';
 
 const NavBar = () => {
   const dispatch = useDispatch();
-  const { authenticated, currentUser } = useSelector(getAuth);
+  const { auth } = useSelector(getAuth);
   const history = useHistory();
+  const { logout } = useFirebase();
+  const { isLoaded, isEmpty, email } = auth;
+  const authenticated = isLoaded && !isEmpty;
 
   const onSignIn = () => {
     dispatch(openModal('LoginModal'));
@@ -23,6 +27,7 @@ const NavBar = () => {
 
   const onSignOut = () => {
     dispatch(logOut());
+    logout();
     history.push('/');
   };
 
@@ -51,7 +56,7 @@ const NavBar = () => {
         )}
 
         {authenticated ? (
-          <SignedIn signOut={onSignOut} currentUser={currentUser} />
+          <SignedIn signOut={onSignOut} currentUser={email} />
         ) : (
           <SignedOut signIn={onSignIn} register={onRegister} />
         )}

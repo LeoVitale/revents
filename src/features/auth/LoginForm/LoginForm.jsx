@@ -1,12 +1,13 @@
 import React from 'react';
-import { Segment, Form, Button } from 'semantic-ui-react';
-import { useDispatch } from 'react-redux';
+import { Segment, Form, Button, Label, Divider } from 'semantic-ui-react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { login } from 'modules/auth';
+import { login, getAuth } from 'modules/auth';
 
 import TextInput from 'components/form/TextInput';
+import SocialLogin from '../SocialLogin';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required('The email is required'),
@@ -15,6 +16,7 @@ const validationSchema = Yup.object().shape({
 
 const LoginForm = () => {
   const dispatch = useDispatch();
+  const { error } = useSelector(getAuth);
 
   const form = {
     email: '',
@@ -36,11 +38,17 @@ const LoginForm = () => {
         {props => (
           <Form error size="large" onSubmit={props.handleSubmit}>
             <TextInput name="email" type="text" label="Email Address" />
-            <TextInput name="password" type="text" label="Password" />
-
+            <TextInput name="password" type="password" label="Password" />
+            {error && (
+              <Label basic color="red">
+                {error}
+              </Label>
+            )}
             <Button type="submit" fluid size="large" color="teal">
               Login
             </Button>
+            <Divider horizontal>Or</Divider>
+            <SocialLogin />
           </Form>
         )}
       </Formik>

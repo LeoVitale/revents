@@ -14,7 +14,7 @@ const NavBar = () => {
   const { auth } = useSelector(getAuth);
   const history = useHistory();
   const { logout } = useFirebase();
-  const { isLoaded, isEmpty, email } = auth;
+  const { isLoaded, isEmpty, email, displayName, photoURL } = auth;
   const authenticated = isLoaded && !isEmpty;
 
   const onSignIn = () => {
@@ -56,7 +56,7 @@ const NavBar = () => {
         )}
 
         {authenticated ? (
-          <SignedIn signOut={onSignOut} currentUser={email} />
+          <SignedIn signOut={onSignOut} {...{ displayName, photoURL }} />
         ) : (
           <SignedOut signIn={onSignIn} register={onRegister} />
         )}

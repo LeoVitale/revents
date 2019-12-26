@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { login, getAuth } from 'modules/auth';
+import { login, getAuth, socialLogin } from 'modules/auth';
 
 import TextInput from 'components/form/TextInput';
 import SocialLogin from '../SocialLogin';
@@ -25,6 +25,10 @@ const LoginForm = () => {
 
   const onFormSubmit = (values, actions) => {
     dispatch(login(values));
+  };
+
+  const onSocialLogin = selectedProvider => {
+    dispatch(socialLogin(selectedProvider));
   };
 
   return (
@@ -48,7 +52,7 @@ const LoginForm = () => {
               Login
             </Button>
             <Divider horizontal>Or</Divider>
-            <SocialLogin />
+            <SocialLogin onSocialLogin={onSocialLogin} />
           </Form>
         )}
       </Formik>

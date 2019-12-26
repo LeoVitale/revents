@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 
-const SocialLogin = ({ socialLogin }) => {
+const SocialLogin = ({ onSocialLogin }) => {
   return (
     <div>
       <Button
-        onClick={() => socialLogin('facebook')}
+        onClick={() => onSocialLogin('facebook')}
         type="button"
         style={{ marginBottom: '10px' }}
         fluid
@@ -14,7 +14,7 @@ const SocialLogin = ({ socialLogin }) => {
       </Button>
 
       <Button
-        onClick={() => socialLogin('google')}
+        onClick={() => onSocialLogin('google')}
         type="button"
         fluid
         color="google plus">

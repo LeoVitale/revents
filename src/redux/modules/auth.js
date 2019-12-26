@@ -1,4 +1,5 @@
 import { createStructuredSelector } from 'reselect';
+import { toastr } from 'react-redux-toastr';
 import { createReducer } from '../utils/reducer';
 import { closeModal } from './modal';
 
@@ -99,6 +100,45 @@ export const registerUser = ({ displayName, email, password }) => {
     } catch (error) {
       console.log(error);
       dispatch(authError(error.message));
+    }
+  };
+};
+
+export const socialLogin = selectedProvider => {
+  return async (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firestore = getFirestore();
+    const firebase = getFirebase();
+
+    try {
+      dispatch(closeModal());
+      const user = await firebase.login({
+        provider: selectedProvider,
+        type: 'popup',
+      });
+
+      if (user.additionalUserInfo.isNewUser) {
+        await firestore.set(`users/${user.user.uid}`, {
+          displayName: user.profile.displayName,
+          photoURL: user.profile.photoURL,
+          createdAt: firestore.FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const updatePassword = creds => {
+  return async (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase();
+    const user = firebase.auth().currentUser;
+
+    try {
+      await user.updatePassword(creds.newPassword1);
+      toastr.success('Success!', 'Your password has been updated');
+    } catch (error) {
+      console.log(error);
     }
   };
 };

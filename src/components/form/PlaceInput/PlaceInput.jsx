@@ -3,7 +3,14 @@ import PlacesAutoComplete from 'react-places-autocomplete';
 import { Form, Label, Segment, List } from 'semantic-ui-react';
 import { useField, useFormikContext } from 'formik';
 
-const PlaceInput = ({ placeholder, options, label, onSelect, ...props }) => {
+const PlaceInput = ({
+  placeholder,
+  options,
+  label,
+  onSelect,
+  width,
+  ...props
+}) => {
   const [field, meta] = useField(props);
   const { setFieldValue, setFieldTouched } = useFormikContext();
   const { onBlur } = field;
@@ -16,7 +23,9 @@ const PlaceInput = ({ placeholder, options, label, onSelect, ...props }) => {
   const onSelectPlaces = value => {
     setFieldValue(field.name, value, true);
     setFieldTouched(field.name);
-    onSelect(value);
+    if (onSelect) {
+      onSelect(value);
+    }
   };
 
   return (
@@ -27,6 +36,7 @@ const PlaceInput = ({ placeholder, options, label, onSelect, ...props }) => {
       onSelect={onSelectPlaces}>
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <Form.Field
+          width={width}
           style={{
             position: 'relative',
           }}>

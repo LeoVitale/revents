@@ -14,7 +14,7 @@ const NavBar = () => {
   const { auth } = useSelector(getAuth);
   const history = useHistory();
   const { logout } = useFirebase();
-  const { isLoaded, isEmpty, email, displayName, photoURL } = auth;
+  const { isLoaded, isEmpty, displayName, photoURL } = auth;
   const authenticated = isLoaded && !isEmpty;
 
   const onSignIn = () => {

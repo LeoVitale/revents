@@ -61,6 +61,9 @@ export const login = ({ email, password }) => {
 
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
+      const user = await firebase.auth().currentUser;
+      console.log(user.updateEmail, user.emailVerified, user.city);
+
       dispatch(closeModal());
     } catch (error) {
       console.log(error);

@@ -5,15 +5,7 @@ import { format } from 'date-fns';
 import EventListAttendee from 'features/event/EventList/EventListAttendee';
 
 const EventListitem = ({ event, deleteEvent }) => {
-  const {
-    hostPhotoURL,
-    hostedBy,
-    title,
-    date,
-    venue,
-    description,
-    attendees,
-  } = event;
+  const { hostPhotoURL, hostedBy, title, date, venue, description } = event;
 
   return (
     <Segment.Group>

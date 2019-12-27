@@ -1,12 +1,13 @@
 import React from 'react';
-import { Form, Label } from 'semantic-ui-react';
+import { Form, Radio, Label } from 'semantic-ui-react';
 import { useField } from 'formik';
 
-const TextInput = ({ width, ...props }) => {
+const RadioInput = ({ label, width, ...props }) => {
   const [field, meta] = useField(props);
+
   return (
     <Form.Field error={meta?.touched && !!meta?.error} width={width}>
-      <Form.Input {...field} {...props} />
+      <Radio {...field} {...props} label={label} />
       {meta?.touched && meta?.error && (
         <Label basic color="red">
           {meta?.error}
@@ -16,4 +17,4 @@ const TextInput = ({ width, ...props }) => {
   );
 };
 
-export default TextInput;
+export default RadioInput;

@@ -4,13 +4,13 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useField, useFormikContext } from 'formik';
 
-const DateInput = ({ placeholder, label, ...props }) => {
+const DateInput = ({ placeholder, label, width, ...props }) => {
   const { setFieldValue } = useFormikContext();
   const [field, meta] = useField(props);
   const { touched, error } = meta;
 
   return (
-    <Form.Field error={touched && !!error}>
+    <Form.Field error={touched && !!error} width={width}>
       <label htmlFor={field.name}>{label}</label>
       <DatePicker
         {...field}

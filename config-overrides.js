@@ -21,7 +21,7 @@ module.exports = override(
     app: path.resolve(__dirname, 'src/app'),
     features: path.resolve(__dirname, 'src/features'),
   }),
-  addWebpackPlugin(new DuplicatePackageCheckerPlugin()),
+  // addWebpackPlugin(new DuplicatePackageCheckerPlugin()),
   process.env.NODE_ENV === 'production' &&
     addWebpackPlugin(new BundleAnalyzerPlugin()),
 );

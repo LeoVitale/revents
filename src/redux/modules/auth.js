@@ -152,5 +152,6 @@ export const updatePassword = creds => {
 
 export const getAuth = createStructuredSelector({
   auth: state => state.firebase.auth,
+  profile: state => state.firebase.profile,
   error: state => state.auth.error,
 });

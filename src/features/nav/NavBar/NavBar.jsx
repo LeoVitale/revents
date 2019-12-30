@@ -11,10 +11,11 @@ import { useFirebase } from 'react-redux-firebase';
 
 const NavBar = () => {
   const dispatch = useDispatch();
-  const { auth } = useSelector(getAuth);
+  const { auth, profile } = useSelector(getAuth);
   const history = useHistory();
   const { logout } = useFirebase();
-  const { isLoaded, isEmpty, displayName, photoURL } = auth;
+  const { isLoaded, isEmpty, displayName } = auth;
+  const { photoURL } = profile;
   const authenticated = isLoaded && !isEmpty;
 
   const onSignIn = () => {

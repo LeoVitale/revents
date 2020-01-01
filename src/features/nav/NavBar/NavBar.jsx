@@ -57,7 +57,11 @@ const NavBar = () => {
         )}
 
         {authenticated ? (
-          <SignedIn signOut={onSignOut} {...{ displayName, photoURL }} />
+          <SignedIn
+            auth={auth}
+            signOut={onSignOut}
+            {...{ displayName, photoURL }}
+          />
         ) : (
           <SignedOut signIn={onSignIn} register={onRegister} />
         )}

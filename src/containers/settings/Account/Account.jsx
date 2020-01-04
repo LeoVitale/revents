@@ -27,9 +27,6 @@ const Account = () => {
 
   const providerId = auth.providerData?.[0]?.providerId;
 
-  console.log('providerId');
-  console.log(providerId);
-
   const form = {
     newPassword1: '',
     newPassword2: '',

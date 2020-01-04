@@ -12,8 +12,6 @@ const CropperInput = ({ imagePreview, setImage, setCropResult }) => {
     }, 'image/jpeg');
   };
 
-  console.log('CropperInput/imagePreview', imagePreview);
-
   if (!imagePreview) {
     return null;
   }

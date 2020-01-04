@@ -1,7 +1,9 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Segment, Image, Item, Header, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { goingToEvent, cancelGoingToEvent } from 'modules/user';
 
 const eventImageStyle = {
   filter: 'brightness(30%)',
@@ -16,8 +18,11 @@ const eventImageTextStyle = {
   color: 'white',
 };
 
-const EventDetailHeader = ({ event }) => {
-  const { category, title, date, hostedBy } = event;
+const EventDetailHeader = ({ event, isGoing, isHost }) => {
+  const dispatch = useDispatch();
+
+  const { category, title, date, hostedBy, id } = event;
+
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: '0' }}>
@@ -36,9 +41,23 @@ const EventDetailHeader = ({ event }) => {
                   content={title}
                   style={{ color: 'white' }}
                 />
-                <p>{date && format(new Date(date), 'dd LLL yyyy h:mm a')}</p>
                 <p>
-                  Hosted by <strong>{hostedBy}</strong>
+                  {date && (
+                    <span>
+                      {format(date.toDate(), 'EEEE do LLL')} at{' '}
+                      {format(date.toDate(), 'h:mm a')}
+                    </span>
+                  )}
+                </p>
+                <p>
+                  Hosted by{' '}
+                  <strong>
+                    <Link
+                      style={{ color: 'white' }}
+                      to={`/profile/${event.hostUid}`}>
+                      {hostedBy}
+                    </Link>
+                  </strong>
                 </p>
               </Item.Content>
             </Item>
@@ -46,17 +65,28 @@ const EventDetailHeader = ({ event }) => {
         </Segment>
       </Segment>
 
-      <Segment attached="bottom">
-        <Button>Cancel My Place</Button>
-        <Button color="teal">JOIN THIS EVENT</Button>
+      <Segment attached="bottom" clearing>
+        {!isHost && (
+          <>
+            {isGoing ? (
+              <Button onClick={() => dispatch(cancelGoingToEvent(event))}>
+                Cancel My Place
+              </Button>
+            ) : (
+              <Button
+                color="teal"
+                onClick={() => dispatch(goingToEvent(event))}>
+                JOIN THIS EVENT
+              </Button>
+            )}
+          </>
+        )}
 
-        <Button
-          as={Link}
-          to={`/manage/${event.id}`}
-          color="orange"
-          floated="right">
-          Manage Event
-        </Button>
+        {isHost && (
+          <Button as={Link} to={`/manage/${id}`} color="orange" floated="right">
+            Manage Event
+          </Button>
+        )}
       </Segment>
     </Segment.Group>
   );

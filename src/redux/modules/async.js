@@ -1,4 +1,4 @@
-import { createReducer } from 'redux/utils/reducer';
+import { createReducer } from '../utils/reducer';
 
 const ASYNC_ACTION_START = 'events/ASYNC_ACTION_START';
 const ASYNC_ACTION_FINISH = 'events/ASYNC_ACTION_FINISH';

@@ -1,11 +1,20 @@
 import React from 'react';
-import { Segment, Item, Icon, List, Button } from 'semantic-ui-react';
+import { Segment, Item, Icon, List, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import EventListAttendee from 'features/event/EventList/EventListAttendee';
+import { objectToArray } from 'app/util/helpers';
 
-const EventListitem = ({ event, deleteEvent }) => {
-  const { hostPhotoURL, hostedBy, title, date, venue, description } = event;
+const EventListitem = ({ event }) => {
+  const {
+    hostPhotoURL,
+    hostedBy,
+    title,
+    date,
+    venue,
+    description,
+    cancelled,
+  } = event;
 
   return (
     <Segment.Group>
@@ -14,10 +23,21 @@ const EventListitem = ({ event, deleteEvent }) => {
           <Item>
             <Item.Image size="tiny" circular src={hostPhotoURL} />
             <Item.Content>
-              <Item.Header as="a">{title}</Item.Header>
+              <Item.Header as={Link} to={`/events/${event.id}`}>
+                {title}
+              </Item.Header>
               <Item.Description>
-                Hosted by <a href="/">{hostedBy}</a>
+                Hosted by{' '}
+                <Link to={`/profile/${event.hostUid}`}>{hostedBy}</Link>
               </Item.Description>
+              {cancelled && (
+                <Label
+                  style={{ top: '-40px' }}
+                  ribbon="right"
+                  color="red"
+                  content="This event has been cancelled"
+                />
+              )}
             </Item.Content>
           </Item>
         </Item.Group>
@@ -32,20 +52,13 @@ const EventListitem = ({ event, deleteEvent }) => {
       </Segment>
       <Segment secondary>
         <List horizontal>
-          {Object.values(event.attendees).map((attendee, index) => (
-            <EventListAttendee key={index} attendee={attendee} />
+          {objectToArray(event.attendees).map((attendee, index) => (
+            <EventListAttendee key={attendee.id} attendee={attendee} />
           ))}
         </List>
       </Segment>
       <Segment clearing>
         <span>{description}</span>
-        <Button
-          as="a"
-          color="red"
-          floated="right"
-          content="Delete"
-          onClick={deleteEvent(event)}
-        />
         <Button
           as={Link}
           to={`/events/${event.id}`}

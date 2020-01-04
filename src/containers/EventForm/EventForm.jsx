@@ -1,15 +1,20 @@
 /* global google */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useFirestoreConnect } from 'react-redux-firebase';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
-import cuid from 'cuid';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { getEvents, updateEvent, createEvent } from 'modules/events';
+import {
+  getEvents,
+  updateEvent,
+  createEvent,
+  cancelToggle,
+} from 'modules/events';
 import TextInput from 'components/form/TextInput';
 import TextArea from 'components/form/TextArea';
 import DateInput from 'components/form/DateInput';
@@ -41,14 +46,30 @@ const validationSchema = Yup.object().shape({
 const EventForm = () => {
   const { id } = useParams();
   const history = useHistory();
-  const { events } = useSelector(getEvents);
+
   const dispatch = useDispatch();
   const [cityLatLng, setCityLatLng] = useState({});
   const [venueCord, setVenueCord] = useState({});
 
-  const event =
-    id && events.length > 0
-      ? events.find(e => e.id === id)
+  const { event } = useSelector(getEvents);
+  const eventQuery = useMemo(
+    () => ({
+      collection: 'events',
+      doc: id,
+      storeAs: 'event',
+    }),
+    [id],
+  );
+
+  useFirestoreConnect(eventQuery);
+
+  if (id && !event) {
+    return null;
+  }
+
+  const eventState =
+    id && event
+      ? { ...event, id }
       : {
           title: '',
           category: '',
@@ -59,21 +80,23 @@ const EventForm = () => {
           hostedBy: '',
         };
 
-  const onFormSubmit = (values, actions) => {
-    values.venueCord = venueCord;
-    if (values.id) {
-      dispatch(updateEvent(values));
-      history.goBack();
-    } else {
-      const newEvent = {
-        ...values,
-        id: cuid(),
-        hostPhotoURL: '/assets/user.png',
-      };
-      dispatch(createEvent(newEvent));
-      history.push(`/events/${newEvent.id}`);
+  const onFormSubmit = async (values, actions) => {
+    values.venueCord =
+      Object.entries(values.venueCord).length !== 0
+        ? values.venueCord
+        : venueCord;
+    try {
+      if (values.id) {
+        await dispatch(updateEvent(values));
+        history.goBack();
+      } else {
+        const createdEvent = await dispatch(createEvent(values));
+        history.push(`/events/${createdEvent.id}`);
+      }
+      actions.resetForm();
+    } catch (error) {
+      console.log(error);
     }
-    actions.resetForm();
     actions.setSubmitting(false);
   };
 
@@ -103,8 +126,8 @@ const EventForm = () => {
         <Segment>
           <Header sub color="teal" content="Event Details" />
           <Formik
-            key={event.id}
-            initialValues={{ ...event }}
+            enableReinitialize
+            initialValues={{ ...eventState }}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
               onFormSubmit(values, actions);
@@ -169,6 +192,15 @@ const EventForm = () => {
                   }>
                   Cancel
                 </Button>
+                <Button
+                  type="button"
+                  color={event.cancelled ? 'green' : 'red'}
+                  floated="right"
+                  content={
+                    event.cancelled ? 'Reactivate event' : 'Cancel event'
+                  }
+                  onClick={() => dispatch(cancelToggle(!event.cancelled, id))}
+                />
               </Form>
             )}
           </Formik>

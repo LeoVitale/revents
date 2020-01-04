@@ -16,7 +16,13 @@ const DateInput = ({ placeholder, label, width, ...props }) => {
         {...field}
         {...props}
         placeholderText={placeholder}
-        selected={(field.value && new Date(field.value)) || null}
+        selected={
+          field.value
+            ? Object.prototype.toString.call(field.value) !== '[object Date]'
+              ? field.value.toDate()
+              : field.value
+            : null
+        }
         onChange={val => {
           setFieldValue(field.name, val);
         }}

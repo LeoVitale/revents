@@ -1,19 +1,9 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useFirestoreConnect } from 'react-redux-firebase';
 
-import {
-  Button,
-  Card,
-  Grid,
-  Header,
-  Icon,
-  Image,
-  Item,
-  List,
-  Menu,
-  Segment,
-} from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
+import { useParams } from 'react-router-dom';
 
 import { getProfile } from 'modules/user';
 
@@ -22,27 +12,42 @@ import UserDetailedDescription from 'features/user-detail/UserDetailedDescriptio
 import UserDetailedPhotos from 'features/user-detail/UserDetailedPhotos';
 import UserDetailedSidebar from 'features/user-detail/UserDetailedSidebar';
 import UserDetailedEvents from 'features/user-detail/UserDetailedEvents';
-
-const query = auth => {
-  return [
-    {
-      collection: 'users',
-      doc: auth.uid || 'undefined',
-      subcollections: [{ collection: 'photos' }],
-      storeAs: 'photos',
-    },
-  ];
-};
+import Loading from 'components/layout/Loading';
 
 const UserDetail = () => {
-  const { auth, profile, photos } = useSelector(getProfile);
-  useFirestoreConnect(() => query(auth));
+  const { id } = useParams();
+  const { photos, userProfile, requesting } = useSelector(getProfile);
+  const isCurrentUser = id === userProfile.id;
+  const loading = Object.values(requesting).some(a => a === true);
+
+  const userDetailQuery = useMemo(
+    () => [
+      {
+        collection: 'users',
+        doc: id,
+        subcollections: [{ collection: 'photos' }],
+        storeAs: 'photos',
+      },
+      {
+        collection: 'users',
+        doc: id,
+        storeAs: 'userProfile',
+      },
+    ],
+    [id],
+  );
+
+  useFirestoreConnect(userDetailQuery);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Grid>
-      <UserDetailedHeader profile={profile} />
-      <UserDetailedDescription profile={profile} />
-      <UserDetailedSidebar />
+      <UserDetailedHeader profile={userProfile} />
+      <UserDetailedDescription profile={userProfile} />
+      <UserDetailedSidebar isCurrentUser={isCurrentUser} />
       {photos && photos.length > 0 && <UserDetailedPhotos photos={photos} />}
       <UserDetailedEvents />
     </Grid>

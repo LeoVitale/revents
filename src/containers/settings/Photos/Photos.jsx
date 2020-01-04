@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Segment, Header, Divider, Grid, Button } from 'semantic-ui-react';
 
@@ -17,20 +17,19 @@ import CropperInput from 'features/photos/CropperInput';
 
 import UserPhotos from 'features/photos/UserPhotos';
 
-const query = auth => {
-  return [
-    {
+const Photos = () => {
+  const { auth, profile, photos } = useSelector(getProfile);
+  const userPhotosQuery = useMemo(
+    () => ({
       collection: 'users',
       doc: auth.uid || 'undefined',
       subcollections: [{ collection: 'photos' }],
       storeAs: 'photos',
-    },
-  ];
-};
+    }),
+    [auth.uid],
+  );
 
-const Photos = () => {
-  const { auth, profile, photos } = useSelector(getProfile);
-  useFirestoreConnect(() => query(auth));
+  useFirestoreConnect(userPhotosQuery);
 
   const [files, setFiles] = useState([]);
   const [image, setImage] = useState(null);
@@ -49,8 +48,6 @@ const Photos = () => {
   };
 
   const onUploadimage = async () => {
-    console.log(files);
-
     try {
       await dispatch(uploadProfileImage(image, files[0].name));
       onCancelCrop();

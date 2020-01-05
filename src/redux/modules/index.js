@@ -7,9 +7,11 @@ import events from './events';
 import modals from './modal';
 import auth from './auth';
 import async from './async';
+import user from './user';
 
 const rootReducer = combineReducers({
   app,
+  user,
   events,
   modals,
   auth,

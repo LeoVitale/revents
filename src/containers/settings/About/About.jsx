@@ -4,7 +4,7 @@ import { Button, Divider, Form, Header, Segment } from 'semantic-ui-react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { updateProfile, getProfile } from 'modules/user';
+import { updateProfile, profileSelector } from 'modules/user';
 
 import RadioInput from 'components/form/RadioInput';
 import TextArea from 'components/form/TextArea';
@@ -33,7 +33,7 @@ const validationSchema = Yup.object().shape({
 
 const About = () => {
   const dispatch = useDispatch();
-  const { profile } = useSelector(getProfile);
+  const { profile } = useSelector(profileSelector);
 
   const form = {
     status: profile.status || '',

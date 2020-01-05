@@ -2,14 +2,30 @@ import { toastr } from 'react-redux-toastr';
 import { createStructuredSelector } from 'reselect';
 import cuid from 'cuid';
 import { asyncActionStart, asyncActionFinish, asyncActionError } from './async';
+import { createReducer } from '../utils/reducer';
+
+const GET_USER_EVENTS = 'user/GET_USER_EVENTS';
+
+const initialState = {
+  events: [],
+};
+
+const getUserEventsReducer = (state, payload) => {
+  return {
+    ...state,
+    events: payload.events,
+  };
+};
+
+export default createReducer(initialState, {
+  [GET_USER_EVENTS]: getUserEventsReducer,
+});
 
 export const updateProfile = user => {
   return async (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase();
-    const { ...updatedUser } = user;
-
     try {
-      await firebase.updateProfile(updatedUser);
+      await firebase.updateAuth(user, true);
       toastr.success('Success!', 'Your profile has been updated');
     } catch (error) {
       console.log(error);
@@ -147,11 +163,68 @@ export const cancelGoingToEvent = event => async (
   }
 };
 
+export const getUserEvents = (userUid, activeTab) => async (
+  dispatch,
+  getState,
+  { getFirestore },
+) => {
+  dispatch(asyncActionStart());
+  const firestore = getFirestore();
+  const today = new Date(Date.now());
+  const eventsRef = firestore.collection('event_attendee');
+  let query;
+  switch (activeTab) {
+    case 1: // past events
+      query = eventsRef
+        .where('userUid', '==', userUid)
+        .where('eventDate', '<=', today)
+        .orderBy('eventDate', 'desc');
+      break;
+    case 2: // future events
+      query = eventsRef
+        .where('userUid', '==', userUid)
+        .where('eventDate', '>=', today)
+        .orderBy('eventDate');
+      break;
+    case 3: // hosted events
+      query = eventsRef
+        .where('userUid', '==', userUid)
+        .where('host', '==', true)
+        .orderBy('eventDate', 'desc');
+      break;
+    default:
+      query = eventsRef
+        .where('userUid', '==', userUid)
+        .orderBy('eventDate', 'desc');
+      break;
+  }
+
+  try {
+    const querySnap = await query.get();
+    const events = await Promise.all(
+      querySnap.docs.map(async (event, index) => {
+        const evt = await firestore
+          .collection('events')
+          .doc(querySnap.docs[index].data().eventId)
+          .get();
+        return { ...evt.data(), id: evt.id };
+      }),
+    );
+
+    dispatch({ type: GET_USER_EVENTS, payload: { events } });
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    console.log(error);
+    dispatch(asyncActionError());
+  }
+};
+
 /*
   SELECTOR
 */
 
-export const getProfile = createStructuredSelector({
+export const profileSelector = createStructuredSelector({
   userProfile: state =>
     (state.firestore.ordered.userProfile &&
       state.firestore.ordered.userProfile[0]) ||
@@ -160,4 +233,5 @@ export const getProfile = createStructuredSelector({
   auth: state => state.firebase.auth,
   photos: state => state.firestore.ordered.photos,
   requesting: state => state.firestore.status.requesting,
+  events: state => state.user.events,
 });

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Grid } from 'semantic-ui-react';
 
 import { useSelector } from 'react-redux';
-import { getEvents } from 'modules/events';
+import { eventsSelector } from 'modules/events';
 import { getAuth } from 'modules/auth';
 import { useParams } from 'react-router-dom';
 import { useFirestoreConnect } from 'react-redux-firebase';
@@ -16,7 +16,7 @@ import EventDetailSideBar from 'features/event/EventDetail/EventDetailSideBar';
 
 const EventDetail = () => {
   const { id } = useParams();
-  const { event } = useSelector(getEvents);
+  const { event } = useSelector(eventsSelector);
   const { auth } = useSelector(getAuth);
 
   const eventQuery = useMemo(

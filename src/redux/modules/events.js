@@ -1,14 +1,16 @@
 import { createStructuredSelector } from 'reselect';
 import { toastr } from 'react-redux-toastr';
 import { fetchSampleData } from 'app/data/mockApi';
-import { createNewEvent } from 'app/util/helpers';
+import { createNewEvent, objectToArray } from 'app/util/helpers';
 import { createReducer } from '../utils/reducer';
 import { asyncActionStart, asyncActionFinish, asyncActionError } from './async';
 
 const FETCH_EVENTS = 'events/FETCH_EVENTS';
+const MORE_EVENTS = 'events/MORE_EVENTS';
 
 const initialState = {
   list: [],
+  moreEvents: true,
 };
 
 /*
@@ -18,12 +20,20 @@ const initialState = {
 const fetchEventsReducer = (state, payload) => {
   return {
     ...state,
-    list: payload.events,
+    list: [...state.list, ...payload.events],
+  };
+};
+
+export const moreEventsReducer = state => {
+  return {
+    ...state,
+    moreEvents: false,
   };
 };
 
 export default createReducer(initialState, {
   [FETCH_EVENTS]: fetchEventsReducer,
+  [MORE_EVENTS]: moreEventsReducer,
 });
 
 /*
@@ -86,6 +96,49 @@ export const cancelToggle = (cancelled, eventId) => {
   };
 };
 
+export const getPagedEvents = () => async (
+  dispatch,
+  getState,
+  { getFirestore },
+) => {
+  const firestore = getFirestore();
+  dispatch(asyncActionStart());
+  const LIMIT = 2;
+  let nextEventSnapshot = null;
+  const {
+    firestore: {
+      data: { events: items },
+    },
+  } = getState();
+  if (items && Object.keys(items).length >= LIMIT) {
+    const itemsArray = objectToArray(items);
+    nextEventSnapshot = await firestore
+      .collection('events')
+      .doc(itemsArray[itemsArray.length - 1].id)
+      .get();
+  }
+
+  const querySnap = await firestore.get({
+    collection: 'events',
+    limit: LIMIT,
+    where: ['date', '>=', new Date()],
+    orderBy: ['date'],
+    startAfter: nextEventSnapshot,
+  });
+
+  const events = querySnap.docs.map(snap => ({ ...snap.data(), id: snap.id }));
+
+  if (querySnap.docs.length < LIMIT) {
+    dispatch({ type: MORE_EVENTS });
+  }
+
+  if (events.length > 0) {
+    dispatch({ type: FETCH_EVENTS, payload: { events } });
+  }
+
+  dispatch(asyncActionFinish());
+};
+
 export const loadMockEvents = () => {
   return async dispatch => {
     try {
@@ -104,8 +157,9 @@ export const loadMockEvents = () => {
   SELECTOR
 */
 
-export const getEvents = createStructuredSelector({
-  events: state => state.firestore.ordered.events,
+export const eventsSelector = createStructuredSelector({
+  events: state => state.events.list || [],
+  moreEvents: state => state.events.moreEvents,
   event: state => state.firestore.data.event,
   loading: state => state.async.loading,
 });

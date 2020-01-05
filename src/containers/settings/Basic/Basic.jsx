@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { addYears } from 'date-fns';
 import { Segment, Form, Header, Divider, Button } from 'semantic-ui-react';
 
-import { updateProfile, getProfile } from 'modules/user';
+import { updateProfile, profileSelector } from 'modules/user';
 
 import TextInput from 'components/form/TextInput';
 import DateInput from 'components/form/DateInput';
@@ -23,7 +23,7 @@ const validationSchema = Yup.object().shape({
 
 const Basic = () => {
   const dispatch = useDispatch();
-  const { profile } = useSelector(getProfile);
+  const { profile } = useSelector(profileSelector);
 
   const form = {
     displayName: profile.displayName || '',

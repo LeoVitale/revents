@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { createReducer } from '../utils/reducer';
 
-const MODAL_OPEN = 'events/MODAL_OPEN';
-const MODAL_CLOSE = 'events/MODAL_CLOSE';
+const MODAL_OPEN = 'modal/MODAL_OPEN';
+const MODAL_CLOSE = 'modal/MODAL_CLOSE';
 
 const initialState = null;
 

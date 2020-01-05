@@ -10,7 +10,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import {
-  getEvents,
+  eventsSelector,
   updateEvent,
   createEvent,
   cancelToggle,
@@ -51,7 +51,7 @@ const EventForm = () => {
   const [cityLatLng, setCityLatLng] = useState({});
   const [venueCord, setVenueCord] = useState({});
 
-  const { event } = useSelector(getEvents);
+  const { event } = useSelector(eventsSelector);
   const eventQuery = useMemo(
     () => ({
       collection: 'events',
@@ -82,7 +82,7 @@ const EventForm = () => {
 
   const onFormSubmit = async (values, actions) => {
     values.venueCord =
-      Object.entries(values.venueCord).length !== 0
+      values.venueCord && Object.entries(values.venueCord).length !== 0
         ? values.venueCord
         : venueCord;
     try {
@@ -194,12 +194,14 @@ const EventForm = () => {
                 </Button>
                 <Button
                   type="button"
-                  color={event.cancelled ? 'green' : 'red'}
+                  color={eventState.cancelled ? 'green' : 'red'}
                   floated="right"
                   content={
-                    event.cancelled ? 'Reactivate event' : 'Cancel event'
+                    eventState.cancelled ? 'Reactivate event' : 'Cancel event'
                   }
-                  onClick={() => dispatch(cancelToggle(!event.cancelled, id))}
+                  onClick={() =>
+                    dispatch(cancelToggle(!eventState.cancelled, id))
+                  }
                 />
               </Form>
             )}

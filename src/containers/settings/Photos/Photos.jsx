@@ -9,7 +9,7 @@ import {
   uploadProfileImage,
   deletePhoto,
   setMainPhoto,
-  getProfile,
+  profileSelector,
 } from 'modules/user';
 
 import DropzoneInput from 'features/photos/DropzoneInput';
@@ -18,7 +18,7 @@ import CropperInput from 'features/photos/CropperInput';
 import UserPhotos from 'features/photos/UserPhotos';
 
 const Photos = () => {
-  const { auth, profile, photos } = useSelector(getProfile);
+  const { auth, profile, photos } = useSelector(profileSelector);
   const userPhotosQuery = useMemo(
     () => ({
       collection: 'users',

@@ -16,7 +16,7 @@ const UserDetailedEvents = ({ events, eventsLoading, changeTab }) => {
       <Segment attached loading={eventsLoading}>
         <Header icon="calendar" content="Events" />
         <Tab
-          // onTabChange={(e, data) => changeTab(e, data)}
+          onTabChange={(e, data) => changeTab(e, data)}
           panes={panes}
           menu={{ secondary: true, pointing: true }}
         />

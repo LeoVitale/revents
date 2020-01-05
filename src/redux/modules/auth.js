@@ -3,9 +3,9 @@ import { toastr } from 'react-redux-toastr';
 import { createReducer } from '../utils/reducer';
 import { closeModal } from './modal';
 
-const LOGIN_USER = 'events/LOGIN_USER';
-const AUTH_ERROR = 'events/AUTH_ERROR';
-const SIGN_OUT_USER = 'events/SIGN_OUT_USER';
+const LOGIN_USER = 'auth/LOGIN_USER';
+const AUTH_ERROR = 'auth/AUTH_ERROR';
+const SIGN_OUT_USER = 'auth/SIGN_OUT_USER';
 
 const initialState = {
   authenticated: false,

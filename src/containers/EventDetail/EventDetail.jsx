@@ -47,7 +47,7 @@ const EventDetail = () => {
           isHost={isHost}
         />
         <EventDetailInfo event={event} />
-        <EventDetailChat />
+        <EventDetailChat eventId={id} />
       </Grid.Column>
       <Grid.Column width={6}>
         <EventDetailSideBar attendees={attendees} />

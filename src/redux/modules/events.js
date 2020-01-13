@@ -4,6 +4,7 @@ import { fetchSampleData } from 'app/data/mockApi';
 import { createNewEvent, objectToArray } from 'app/util/helpers';
 import { createReducer } from '../utils/reducer';
 import { asyncActionStart, asyncActionFinish, asyncActionError } from './async';
+import { isEmpty } from 'react-redux-firebase';
 
 const FETCH_EVENTS = 'events/FETCH_EVENTS';
 const MORE_EVENTS = 'events/MORE_EVENTS';
@@ -139,6 +140,27 @@ export const getPagedEvents = () => async (
   dispatch(asyncActionFinish());
 };
 
+export const addEventComment = (eventId, comment, parentId) => {
+  return async (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase();
+    const { displayName, photoURL } = getState().firebase.profile;
+    const { uid } = firebase.auth().currentUser;
+    const newcomment = {
+      parentId,
+      displayName,
+      photoURL: photoURL || '/assets/user.png',
+      uid,
+      text: comment,
+      date: Date.now(),
+    };
+    try {
+      await firebase.push(`event_chat/${eventId}`, newcomment);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+};
+
 export const loadMockEvents = () => {
   return async dispatch => {
     try {
@@ -163,3 +185,10 @@ export const eventsSelector = createStructuredSelector({
   event: state => state.firestore.data.event,
   loading: state => state.async.loading,
 });
+
+export const eventChatSelector = id =>
+  createStructuredSelector({
+    chat: state =>
+      !isEmpty(state.firebase.data.event_chat) &&
+      objectToArray(state.firebase.data.event_chat[id]),
+  });

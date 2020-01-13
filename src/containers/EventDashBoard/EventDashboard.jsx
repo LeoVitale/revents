@@ -22,7 +22,7 @@ const EventDashboard = () => {
     } else {
       setLoadingInitial(false);
     }
-  }, [dispatch, events]);
+  }, [dispatch, events, loading]);
 
   const handleGetNextEvents = async () => {
     await dispatch(getPagedEvents());
